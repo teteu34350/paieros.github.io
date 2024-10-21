@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos do modal */
+        #modal {
+            display: none; /* Oculta o modal por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        #modal-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* Margin adaptável */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* Largura responsiva */
+            max-width: 500px; /* Máximo de largura */
+            border-radius: 8px; /* Cantos arredondados */
+        }
+
+        /* Estilos do formulário */
+        #pedido-form input {
+            width: 100%; /* Largura total */
+            padding: 10px; /* Espaçamento interno */
+            margin: 5px 0; /* Espaçamento entre campos */
+            border: 1px solid #ccc; /* Borda suave */
+            border-radius: 4px; /* Cantos arredondados */
+        }
+
+        /* Botão de confirmação do pedido */
+        #pedido-form button {
+            background-color: #28a745; /* Cor de fundo verde */
+            color: white; /* Texto branco */
+            padding: 10px; /* Espaçamento interno */
+            border: none; /* Sem borda */
+            border-radius: 4px; /* Cantos arredondados */
+            cursor: pointer; /* Mão no hover */
+            width: 100%; /* Largura total */
+        }
+        
+        #pedido-form button:hover {
+            background-color: #218838; /* Cor de fundo verde mais escuro no hover */
+        }
+
+        /* Estilo do botão de enviar pedido */
+        #enviar-pedido {
+            background-color: #007bff; /* Cor de fundo azul */
+            color: white; /* Texto branco */
+            padding: 10px; /* Espaçamento interno */
+            border: none; /* Sem borda */
+            border-radius: 4px; /* Cantos arredondados */
+            cursor: pointer; /* Mão no hover */
+            width: 100%; /* Largura total */
+        }
+        
+        #enviar-pedido:hover {
+            background-color: #0056b3; /* Cor de fundo azul mais escuro no hover */
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            #modal-content {
+                margin: 5% auto; /* Margin adaptável para celulares */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Carrinho de Compras</h1>
+    <div id="carrinho"></div>
+    <h2 id="total">Total: R$ 0,00</h2>
+
+    <button id="enviar-pedido">Enviar Pedido</button>
+
+    <a href="index.html">Voltar à Loja</a>
+
+    <!-- Modal para coletar dados do cliente -->
+    <div id="modal">
+        <div id="modal-content">
+            <span id="fechar-modal" style="cursor:pointer;">&times; Fechar</span>
+            <h2>Confirmar Pedido</h2>
+            <form id="pedido-form">
+                <input type="text" name="cliente" placeholder="Seu nome" required>
+                <input type="tel" name="telefone" placeholder="Seu telefone" required>
+                <button type="submit">Confirmar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar o carrinho
+        function carregarCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const carrinhoDiv = document.getElementById('carrinho');
+            const totalDiv = document.getElementById('total');
+            let total = 0;
+
+            carrinhoDiv.innerHTML = ''; // Limpa o carrinho antes de carregar
+
+            carrinho.forEach(item => {
+                carrinhoDiv.innerHTML += `
+                    <div>
+                        <h3>${item.nome}</h3>
+                        <p>Preço: R$ ${item.preco.toFixed(2)}</p>
+                        <p>Quantidade: ${item.quantidade}</p>
+                        <p>Subtotal: R$ ${item.subtotal.toFixed(2)}</p>
+                    </div>
+                `;
+                total += item.subtotal;
+            });
+
+            totalDiv.innerHTML = `Total: R$ ${total.toFixed(2)}`;
+        }
+
+        // Exibe o modal ao clicar no botão "Enviar Pedido"
+        document.getElementById('enviar-pedido').addEventListener('click', function() {
+            document.getElementById('modal').style.display = 'block'; // Mostra o modal
+        });
+
+        // Fecha o modal ao clicar no "x"
+        document.getElementById('fechar-modal').addEventListener('click', function() {
+            document.getElementById('modal').style.display = 'none'; // Oculta o modal
+        });
+
+        // Envio do pedido
+        document.getElementById('pedido-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const pedidos = carrinho.map(item => {
+                return `Produto: ${item.nome}, Quantidade: ${item.quantidade}, Subtotal: R$ ${item.subtotal.toFixed(2)}`;
+            }).join('%0A');
+
+            const total = carrinho.reduce((acc, item) => acc + item.subtotal, 0).toFixed(2);
+            const cliente = this.cliente.value;
+            const telefone = this.telefone.value;
+
+            // Cria a mensagem para enviar pelo WhatsApp
+            const mensagem = `Novo Pedido:\nNome: ${cliente}\nTelefone: ${telefone}\nTotal: R$ ${total}\nDetalhes:\n${pedidos}`;
+            const linkWhatsApp = `https://api.whatsapp.com/send?phone=553599547315&text=${encodeURIComponent(mensagem)}`;
+
+            // Redireciona para o WhatsApp
+            window.open(linkWhatsApp, '_blank');
+
+            // Armazena o pedido no localStorage (opcional)
+            const pedidosExistentes = JSON.parse(localStorage.getItem('pedidos')) || [];
+            pedidosExistentes.push({ cliente, telefone, pedidos, total });
+            localStorage.setItem('pedidos', JSON.stringify(pedidosExistentes));
+
+            alert('Pedido enviado com sucesso!');
+
+            localStorage.removeItem('carrinho'); // Limpa o carrinho após enviar
+            carregarCarrinho(); // Atualiza a tela
+            document.getElementById('modal').style.display = 'none'; // Oculta o modal após o envio
+        });
+
+        // Carrega o carrinho ao abrir a página
+        window.onload = carregarCarrinho;
+    </script>
+</body>
+
+</html>

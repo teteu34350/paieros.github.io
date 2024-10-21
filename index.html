@@ -1,27 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedido de Paiero</title>
+    <title>Venda de Paieros</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilo para o botão de remover */
+        .btn-remover {
+            background-color: red; /* Fundo vermelho */
+            color: white;          /* Texto branco */
+            border: none;         /* Sem borda */
+            padding: 5px 10px;    /* Espaçamento interno */
+            cursor: pointer;       /* Cursor em forma de mão ao passar o mouse */
+            border-radius: 4px;    /* Bordas arredondadas */
+        }
+
+        .btn-remover:hover {
+            background-color: darkred; /* Cor mais escura ao passar o mouse */
+        }
+    </style>
 </head>
+
 <body>
+    <h1>Paieros-Encomenda-28/10/2024</h1>
     <div class="container">
-        <h1>Faça seu Pedido de Paiero</h1>
-        <form id="pedidoForm" action="https://formspree.io/f/myzgeprg" method="post">
-            <label for="tipo">Tipo de Paiero:</label>
-            <select id="tipo" name="tipo" required>
-                <option value="tipo1">Tipo 1</option>
-                <option value="tipo2">Tipo 2</option>
-                <option value="tipo3">Tipo 3</option>
-            </select>
-
-            <label for="quantidade">Quantidade:</label>
-            <input type="number" id="quantidade" name="quantidade" min="1" required>
-
-            <button type="submit">Enviar Pedido</button>
-        </form>
+        <div class="card">
+            <img src="douradinho-partes_0003s_0000s_0002_Macob.png" alt="Paiero Tradicional">
+            <h2>Douradinho</h2>
+            <p>R$ 5,00</p>
+            <input type="number" id="quantidade1" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Douradinho', 5, 'quantidade1')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="flor-do-norte.webp" alt="Paiero Especial">
+            <h2>Flor do Norte</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade2" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Flor do Norte', 7, 'quantidade2')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="image-removebg-preview (83)-1705018799297.webp" alt="Paiero Especial">
+            <h2>Paulistinha</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade3" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Paulistinha', 7, 'quantidade3')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="thau-brigado.jpeg" alt="Paiero Especial">
+            <h2>Thau Brigado</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade4" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Thau Brigado', 7, 'quantidade4')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="blu-ice.jpeg" alt="Paiero Especial">
+            <h2>Blue Ice - Terra Tombada</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade5" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Blue Ice - Terra Tombada', 7, 'quantidade5')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="cereja.jpeg" alt="Paiero Especial">
+            <h2>Cereja - Terra Tombada</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade6" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Cereja - Terra Tombada', 7, 'quantidade6')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="mamcadela.jpeg" alt="Paiero Especial">
+            <h2>Macadela - Terra Tombada</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade7" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Macadela - Terra Tombada', 7, 'quantidade7')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="menta.jpeg" alt="Paiero Especial">
+            <h2>Menta - Terra Tombada</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade8" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Menta - Terra Tombada', 7, 'quantidade8')">Adicionar ao Carrinho</button>
+        </div>
+        <div class="card">
+            <img src="maracuja.jpeg" alt="Paiero Especial">
+            <h2>Maracujá - Terra Tombada</h2>
+            <p>R$ 7,00</p>
+            <input type="number" id="quantidade9" placeholder="Quantidade" min="1" value="1">
+            <button onclick="adicionarAoCarrinho('Maracujá - Terra Tombada', 7, 'quantidade9')">Adicionar ao Carrinho</button>
+        </div>
     </div>
+
+    <h2>Carrinho de Compras</h2>
+    <ul id="carrinho"></ul>
+    <p>Total: R$ <span id="total">0.00</span></p>
+    <button onclick="finalizarPedido()">Finalizar Pedido</button>
+
+    <script>
+        function adicionarAoCarrinho(nome, preco, quantidadeId) {
+            const quantidade = document.getElementById(quantidadeId).value;
+            const subtotal = preco * quantidade;
+
+            const item = {
+                nome: nome,
+                preco: preco,
+                quantidade: parseInt(quantidade),
+                subtotal: subtotal
+            };
+
+            // Adiciona o item ao carrinho no localStorage
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            carrinho.push(item);
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+
+            // Atualiza o carrinho na página
+            atualizarCarrinho();
+            // Atualiza o total na página
+            atualizarTotal();
+        }
+
+        function atualizarCarrinho() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            const carrinhoList = document.getElementById('carrinho');
+            carrinhoList.innerHTML = '';
+
+            carrinho.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${item.nome} - R$ ${item.preco.toFixed(2)} x ${item.quantidade} = R$ ${item.subtotal.toFixed(2)}
+                    <button class="btn-remover" onclick="removerDoCarrinho(${index})">Remover</button>
+                `;
+                carrinhoList.appendChild(li);
+            });
+        }
+
+        function atualizarTotal() {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            let total = 0;
+            carrinho.forEach(item => {
+                total += item.subtotal;
+            });
+            document.getElementById('total').innerText = total.toFixed(2);
+        }
+
+        function removerDoCarrinho(index) {
+            const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            carrinho.splice(index, 1); // Remove o item do carrinho
+            localStorage.setItem('carrinho', JSON.stringify(carrinho)); // Atualiza o localStorage
+            atualizarCarrinho(); // Atualiza a visualização do carrinho
+            atualizarTotal(); // Atualiza o total
+        }
+
+        function finalizarPedido() {
+            // Redireciona para a página do carrinho
+            window.location.href = 'carrinho.html';
+        }
+
+        // Atualiza o carrinho ao carregar a página
+        window.onload = atualizarCarrinho;
+    </script>
 </body>
 </html>

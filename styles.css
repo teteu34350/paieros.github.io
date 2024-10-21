@@ -1,0 +1,77 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    margin: 10px;
+    text-align: center;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+input {
+    margin-bottom: 10px;
+    width: 60px;
+    padding: 5px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#carrinho {
+    list-style-type: none;
+    padding: 0;
+}
+
+#carrinho li {
+    margin: 10px 0;
+}
+
+/* Estilos para telas pequenas */
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 90%; /* Cards ocupam a maior parte da largura da tela */
+    }
+
+    input {
+        width: 80px; /* Um pouco mais largo para facilitar o toque */
+    }
+
+    button {
+        width: 100%; /* Botões ocupam a largura total do card */
+    }
+}
